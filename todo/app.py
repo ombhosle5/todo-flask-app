@@ -8,10 +8,10 @@ app.secret_key = os.environ.get('SECRET_KEY', 'moon_talk_secret_2025')
 
 # Database connection function
 def get_db_connection():
-    return psycopg2.connect(
-        database_url=os.environ.get('DATABASE_URL'),
-        sslmode='require'
-    )
+    database_url = os.environ.get('DATABASE_URL')
+    if not database_url:
+        raise ValueError("DATABASE_URL environment variable not set")
+    return psycopg2.connect(database_url, sslmode='require')
 
 # Initialize database tables
 def init_db():
