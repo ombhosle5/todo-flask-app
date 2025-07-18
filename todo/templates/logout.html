@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='specific.css') }}">
+
+    <title>Logout</title>
+</head>
+<body>
+    <div class="auth-container">
+        <h2>Goodbye, {{ name }} 👋</h2>
+        <p>Thank you for using the To-Do app.</p>
+        <p><a href="/login">Login again</a></p>
+    </div>
+
+    <script>
+        const saved = localStorage.getItem('darkMode');
+        if (saved === 'true') document.body.classList.add('dark');
+    </script>
+</html>
