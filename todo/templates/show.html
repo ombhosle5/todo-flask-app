@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="theme-color" content="#f5f5f5" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1e1e1e" media="(prefers-color-scheme: dark)">
+
+    <title>My To-Do List</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon_io/favicon.ico') }}">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Font Awesome (Optional Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="p-3">
+<div class="container">
+    <!-- Dark Mode Button -->
+    <div class="text-end mb-2">
+        <button class="btn btn-outline-dark" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+    </div>
+
+    <!-- Welcome -->
+    <h2 class="text-center mb-4">Welcome, {{ session['username'] }}</h2>
+
+    <!-- Task Form -->
+    <form method="POST" action="/" class="input-group mb-4">
+        <input type="text" name="task" class="form-control" placeholder="Enter a new task" required>
+        <button type="submit" class="btn btn-primary">Add Task</button>
+    </form>
+
+    <!-- Task List -->
+    <ul class="list-group">
+        {% for todo in todos %}
+        <li class="list-group-item d-flex justify-content-between align-items-center {% if todo[2] %}completed{% endif %}">
+            <span class="task-text">
+                {% if todo[2] %}
+                    <s>{{ todo[1] }}</s> ✅
+                {% else %}
+                    {{ todo[1] }} ❌
+                {% endif %}
+            </span>
+            <div class="btn-group btn-group-sm">
+                <a href="/edit/{{ todo[0] }}" class="btn btn-warning">Edit</a>
+                <a href="/delete/{{ todo[0] }}" onclick="return confirm('Are you sure?')" class="btn btn-danger">Delete</a>
+                <a href="/toggle/{{ todo[0] }}" class="btn btn-secondary">
+                    {% if todo[2] %}Mark Pending{% else %}Mark Complete{% endif %}
+                </a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Logout Button -->
+    <div class="text-center mt-4">
+        <a href="/logout" class="btn btn-outline-secondary">Logout</a>
+    </div>
+</div>
+    <!-- JavaScript: Bootstrap + Dark Mode -->
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            localStorage.setItem('darkMode', isDark);
+        }
+
+        window.onload = function () {
+            const saved = localStorage.getItem('darkMode');
+            if (saved === 'true') {
+                document.body.classList.add('dark');
+            }
+        };
+    </script>
+
+</body>
+</html>
