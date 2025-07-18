@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
+from urllib.parse import urlparse
 import os
 
 app = Flask(__name__)
@@ -8,10 +9,18 @@ app.secret_key = os.environ.get('SECRET_KEY', 'moon_talk_secret_2025')
 
 # Database connection function
 def get_db_connection():
-    return psycopg2.connect(
-        database_url=os.environ.get('DATABASE_URL'),
-        sslmode='require'
-    )
+    database_url = os.environ.get('DATABASE_URL')
+    if not database_url:
+        raise ValueError("DATABASE_URL environment variable not set")
+    
+    # Parse the URL to handle different formats
+    parsed = urlparse(database_url)
+    
+    # Handle postgres:// vs postgresql:// URL schemes
+    if parsed.scheme == 'postgres':
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    
+    return psycopg2.connect(database_url)
 
 # Initialize database tables
 def init_db():
